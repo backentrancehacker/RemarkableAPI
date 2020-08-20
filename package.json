@@ -1,0 +1,23 @@
+{
+  "name": "adcharity-remarkable-api",
+  "version": "1.0.0",
+  "description": "Unofficial Remarkable Tablet API",
+  "main": "index.js",
+  "files": [
+	  "index.js",
+	  "src/remarkable.js",
+	  "src/utils.js",
+	  "README.md"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["reMarkable", "AdCharity", "Paper"],
+  "author": "AdCharity",
+  "license": "ISC",
+  "dependencies": {
+    "adm-zip": "^0.4.16",
+    "node-fetch": "^2.6.0",
+    "uuid4": "^2.0.2"
+  }
+}
