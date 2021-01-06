@@ -1,4 +1,4 @@
-# AdCharity Remarkable API
+# Remarkable API
 Unofficial Remarkable Tablet API
 
 ## Benefits
