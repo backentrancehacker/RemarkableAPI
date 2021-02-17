@@ -1,7 +1,7 @@
 {
   "name": "adcharity-remarkable-api",
-  "version": "1.0.0",
-  "description": "Unofficial Remarkable Tablet API",
+  "version": "1.0.1",
+  "description": "The unofficial reMarkable API for Node.js",
   "main": "index.js",
   "files": [
 	  "index.js",

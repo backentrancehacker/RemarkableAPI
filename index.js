@@ -1,3 +1,1 @@
-const Remarkable = require('./src/remarkable');
-
-module.exports = Remarkable;
+module.exports = require("./src/remarkable")

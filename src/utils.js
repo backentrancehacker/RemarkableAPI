@@ -11,4 +11,6 @@ const endpoints = {
   user: "https://my.remarkable.com/token/json/2/user/new"
 }
 
-module.exports = { query, endpoints }
+const userAgent = "remarkable-api"
+
+module.exports = { query, endpoints, userAgent }

@@ -3,11 +3,16 @@ const AdmZip = require("adm-zip")
 const uuid4 = require("uuid4")
 const path = require("path")
 
-const utils = require('./utils')
+const { query, endpoints, userAgent } = require('./utils')
 
-const userAgent = `adcharity-remarkable-api`;
+class Device {
+  name = userAgent
+  version = "1.0.1"
+  description = "The unofficial reMarkable API for Node.js"
+}
 
 
+/*
 class Remarkable {
 	constructor() {
 		this.version = '1.0.0';
@@ -210,5 +215,6 @@ class Remarkable {
 		});
 	}
 }
+*/
 
-module.exports = Remarkable;
+module.exports = Device
