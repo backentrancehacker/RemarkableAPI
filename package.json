@@ -3,12 +3,6 @@
   "version": "2.0.0",
   "description": "The unofficial reMarkable API for Node.js",
   "main": "index.js",
-  "files": [
-    "index.js",
-    "src/remarkable.js",
-    "src/utils.js",
-    "README.md"
-  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -1,6 +1,9 @@
 # remarkable-api
 The unofficial reMarkable API for Node.js
 
+## version 2
+Version 2 will introduce breaking changes to the API. It is currently a work in progress.
+
 ## installation
 ```
 npm install adcharity-remarkable-api
