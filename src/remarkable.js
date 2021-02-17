@@ -7,7 +7,7 @@ const {
   register,
   encodeParams
 } = require("./utils")
-const Document = require("./api/document") 
+const Item = require("./api/item") 
 
 // user: token/json/2/user/new
 // device: token/json/2/device/new
@@ -108,15 +108,17 @@ class Device {
       }
     }).then(res => res.json())
 
-    return documents.map(meta => (
-      new Document(this.storageHost, meta)
+    return documents.map(item => (
+      new Item(this.storageHost, item)
     ))
   }
 
-  async document(id) {
-    return id 
-      ? await this._fetchDocuments({ doc: id })[0]
-      : this._fetchDocuments()
+  async item(id) {
+    return (await this._fetchDocuments({ doc: id }))[0]
+  }
+
+  async items(id) {
+    return (await this._fetchDocuments(id ? { doc: id } : false))
   }
 }
 

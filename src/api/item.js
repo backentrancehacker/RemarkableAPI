@@ -1,4 +1,4 @@
-class Document {
+class Item {
   constructor(storageHost, meta) {
     this.storageHost = storageHost
     this.meta = meta
@@ -23,4 +23,4 @@ class Document {
  */
 
 
-module.exports = Document
+module.exports = Item
