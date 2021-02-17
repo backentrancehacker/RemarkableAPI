@@ -12,16 +12,20 @@ const {
 // device: token/json/2/device/new
 // discover: service/json/1/document-storage
 
-
 const confirmCode = async (code) => {
-  const token = await query("device", {
-    code,
-    deviceID: uuid4(),
-    deviceDesc: "desktop-linux",
+  const token = await query("auth", {
+    api: "token/json/2/device/new",
+    body: {
+      code,
+      deviceID: uuid4(),
+      deviceDesc: "desktop-windows"
+    }
   }).then(res => res.text())
 
-  ["invalid", "unknown", "you"].forEach(error => {
-    if(token.startsWith(error)) {
+  const errors = ["invalid", "unknown", "you", "<!doctype html>"]
+
+  errors.forEach(error => {
+    if(token.toLowerCase().startsWith(error)) {
       throw new Error("invalid one-time code")
     }
   })
@@ -30,17 +34,18 @@ const confirmCode = async (code) => {
 }
 
 class Device {
-  name = userAgent
-  version = "1.0.1"
-  description = "The unofficial reMarkable API for Node.js"
-
   constructor(userToken) {
-    this.userToken = userToken
+    Object.assign(this, {
+      userToken,
+      version: "2.0.0",
+      name: "remarkable",
+      description: "The unofficial reMarkable API for Node.js"
+    })
   }
 
-  async authenticate(code) {
-    const token = await confirmCode(code)
-    const refresh = await query("user", {
+  async refresh(token) {
+    const refresh = await query("auth", {
+      api: "token/json/2/user/new",
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -51,11 +56,15 @@ class Device {
     }
 
     this.userToken = await refresh.text()
-    this.storageHost = await this.#discoverStorage()
     return this.userToken
   }
 
-  async #discoverStorage(force) {
+  async register(code) {
+    const token = await confirmCode(code)
+    return this.refresh(token)
+  }
+
+  async discoverStorage(force) {
     if(this.storageHost && !force) {
       return this.storageHost
     }

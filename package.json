@@ -4,20 +4,25 @@
   "description": "The unofficial reMarkable API for Node.js",
   "main": "index.js",
   "files": [
-	  "index.js",
-	  "src/remarkable.js",
-	  "src/utils.js",
-	  "README.md"
+    "index.js",
+    "src/remarkable.js",
+    "src/utils.js",
+    "README.md"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["reMarkable", "AdCharity", "Paper"],
-  "author": "AdCharity",
+  "keywords": [
+    "reMarkable",
+    "tablet",
+    "paper",
+    "api"
+  ],
+  "author": "nathan-pham",
   "license": "ISC",
   "dependencies": {
     "adm-zip": "^0.4.16",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "uuid4": "^2.0.2"
   }
 }

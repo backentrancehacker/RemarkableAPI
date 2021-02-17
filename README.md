@@ -13,27 +13,27 @@ const Device = require("adcharity-remarkable-api")
 const reMarkable = new Device()
 ```
 
-## authentication
-To use this module, you must retrieve a one-time code from the reMarkable [dashboard](my.remarkable.com). Confirming your one-time code with return a `userToken` that can be used to interact with the reMarkable. 
+## registering a device
+To use this module, you must retrieve a one-time code from the reMarkable [dashboard](https://my.remarkable.com/connect/desktop). Confirming your one-time code will return a `userToken` that can be used to interact with the device. You should store this token somewhere safe, such as in an environmental variable. 
 ```
 const Device = require("adcharity-remarkable-api")
 const reMarkable = new Device()
 
-device.authenticateUser("one-time code").then(code => {
+reMarkable.register("one-time code").then(code => {
   console.log(code)
 })
 ```
 
+## setting user token
+The `Device` class will accept a `userToken`. To ensure the token is still valid, you can also use the `refresh` method.
 
-Once you have your userToken, you can replace the above code and set the userToken directly.
 ```
-const Remarkable = require('adcharity-remarkable-api')
-const fs = require('fs')
-const main = async () => {
-	const device = new Remarkable()	
-	device.userToken = fs.readFileSync('./userToken.txt', 'utf-8')
-}
-main()
+const Device = require('adcharity-remarkable-api')
+const reMarkable = new Device(process.env.USER_TOKEN)
+
+reMarkable.refresh(process.env.USER_TOKEN).then(userToken => {
+  // returns the userToken back
+})
 ```
 
 ## Documents
