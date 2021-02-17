@@ -10,21 +10,18 @@ npm install adcharity-remarkable-api
 After you install the `remarkable-api` module, you can initialize a new reMarkable device.
 ```
 const Device = require("adcharity-remarkable-api")
-const main = async () => {
-	const device = new Device()
-}
-main()
+const reMarkable = new Device()
 ```
 
 ## authentication
 To use this module, you must retrieve a one-time code from the reMarkable [dashboard](my.remarkable.com). Confirming your one-time code with return a `userToken` that can be used to interact with the reMarkable. 
 ```
 const Device = require("adcharity-remarkable-api")
-const main = async () => {
-	const device = new Device()	
-  print(await device.authenticateUser("one-time-code"))
-}
-main()
+const reMarkable = new Device()
+
+device.authenticateUser("one-time code").then(code => {
+  console.log(code)
+})
 ```
 
 
