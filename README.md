@@ -64,7 +64,7 @@ The metadata initially returned from reMarkable's cloud servers has odd capitili
 ```js
 {
   "ID": "ec53580c-3579-4fe7-a096-fd1de8011b70", // id
-  "Version": 0, // removed
+  "Version": 0, // version
   "Message": "", // removed
   "Success": false, // removed
   "BlobURLGet": "", // blob

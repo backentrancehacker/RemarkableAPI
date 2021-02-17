@@ -4,6 +4,7 @@ const fs = require("fs").promises
 const { query } = require("../utils")
 const map = {
   "ID": "id",
+  "Version": "version",
   "BlobURLGet": "blob",
   "BlobURLGetExpires": "blobExpiration",
   "ModifiedClient": "lastModified",
@@ -11,7 +12,7 @@ const map = {
   "VissibleName": "visibleName",
   "CurrentPage": "currentPage",
   "Bookmarked": "bookmarked",
-  "Parent": "parent"
+  "Parent": "parent",
 }
 
 const correctInfo = (_meta, invert) => {
@@ -52,45 +53,34 @@ class Item {
     await fs.writeFile(fileName, blob)
   }
   async upload() {
-    // if type == CollectionType    
+    if(this.type == "CollectionType") {
+
+    }
+    else {
+      throw new Error("this item is not a folder; upload from the reMarkable instance instead")
+    }
   }
   async update() {
 
   }
   async remove() {
+    const { id, version } = this.meta
 
+    const [ data ] = await query(this.storageHost, {
+      api: "document-storage/json/2/delete"
+      method: "PUT",
+      body: {
+        ID: id,
+        Version: version
+      }
+    }).then(res => res.json())
+
+    return data
   }
 }
 
 /*
-
-	// const url = document.BlobURLGet
-
-	// const blob = await fetch(url, {
-	// 	method: 'GET',
-	// 	headers: {
-	// 		'User-Agent': 'adcharity-remarkable-api',
-	// 		Authorization: `Bearer ${device.userToken}`
-	// 	}
-	// }).then(res => res.buffer())
-
-	// await fs.writeFile('reMarkable.zip', blob)
-
 	// await extract('reMarkable.zip', { dir: path.join(__dirname, 'reMarkable.pdf') })
-{
-    "ID": "ec53580c-3579-4fe7-a096-fd1de8011b70",
-    "Version":0,
-    "Message": "Not found or access denied",
-    "Success":false,
-    "BlobURLGet":"",
-    "BlobURLGetExpires":"0001-01-01T00:00:00Z",
-    "ModifiedClient":"0001-01-01T00:00:00Z",
-    "Type":"",
-    "VissibleName":"",
-    "CurrentPage":0,
-    "Bookmarked":false,
-    "Parent":""
-}
  */
 
 

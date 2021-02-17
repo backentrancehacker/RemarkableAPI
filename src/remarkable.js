@@ -138,26 +138,6 @@ class Remarkable {
 		this.name = 'adcharity-remarkable-api';
 		this.description = 'Unofficial Remarkable Tablet API';
 	}
-	async getDocuments(options) {
-		this.storageHost = await this.getStorageHost();
-
-		const {id, withBlob} = options || {};
-		const query = typeof options == 'undefined' ? '' : utils.query ({
-			doc: id,
-			withBlob: !!withBlob
-		});
-
-		const url = `${this.storageHost}/document-storage/json/2/docs?${query}`;
-
-		const documents = await fetch(url, {
-			headers: {
-				'User-Agent': userAgent,
-				Authorization: `Bearer ${this.userToken}`
-			}
-		}).then(res => res.json());
-
-		return documents;
-	}
 	async uploadRequest() {
 		this.storageHost = await this.getStorageHost();
 				
