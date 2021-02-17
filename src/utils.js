@@ -2,19 +2,19 @@ const query = params => {
 	const esc = encodeURIComponent;
 	return Object.keys(params)
 		.map(k => `${esc(k)}=${esc(params[k])}`)
-		.join('&');
+		.join('&')
 }
 
 const resources = () => {
 	return [
-		'https://github.com/jmptable/remarkable-tablet-api',
-		'https://my.remarkable.com/',
-		'https://github.com/Ogdentrod/reMarkable-typescript',
-		'https://github.com/splitbrain/ReMarkableAPI',
-		'https://jackbergus.github.io/2017-11-09-hacking-reMarkable/',
-		'https://github.com/canselcik/libremarkable',
-		'https://github.com/reHackable/awesome-reMarkable'
-	];
+		""
+	]
+}
+
+const endpoint = {
+	device: 'https://my.remarkable.com/token/json/2/device/new',
+	user: 'https://my.remarkable.com/token/json/2/user/new',
+	store: 'https://service-manager-production-dot-remarkable-production.appspot.com/service/json/1/document-storage'
 }
 
 module.exports = {

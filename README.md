@@ -1,38 +1,33 @@
-# Remarkable API
-Unofficial Remarkable Tablet API
+# remarkable-api
+The unofficial reMarkable API for Node.js
 
-## Benefits
-* Promised based
-* Simple usage based around "Documents"
-
-## Installation
+## installation
 ```
 npm install adcharity-remarkable-api
 ```
 
-## Getting Started
-Start by installing the api. Next, initialize a new reMarkable device like so.
+## creating a new device
+After you install the `remarkable-api` module, you can initialize a new reMarkable device.
 ```
-const Remarkable = require('adcharity-remarkable-api')
+const Device = require("adcharity-remarkable-api")
 const main = async () => {
-	const device = new Remarkable()
+	const device = new Device()
 }
 main()
 ```
 
-## Authentication
-Get a one-time code from my.remarkable.com
-When you are authenticated, you should save the userToken in a file or somewhere safe. The userToken is how you will interact with the Remarkable.
+## authentication
+To use this module, you must retrieve a one-time code from the reMarkable [dashboard](my.remarkable.com). Confirming your one-time code with return a `userToken` that can be used to interact with the reMarkable. 
 ```
-const Remarkable = require('adcharity-remarkable-api')
-const fs = require('fs')
+const Device = require("adcharity-remarkable-api")
 const main = async () => {
-	const device = new Remarkable()	
-	const userToken = await device.authenticateUser('one-time-code')
-	fs.writeFileSync('./userToken.txt', userToken)
+	const device = new Device()	
+  print(await device.authenticateUser("one-time-code"))
 }
 main()
 ```
+
+
 Once you have your userToken, you can replace the above code and set the userToken directly.
 ```
 const Remarkable = require('adcharity-remarkable-api')
@@ -59,3 +54,5 @@ device.uploadDocument('file  path', 'extension (default is pdf)')
 device.deleteDocument('file id', 'version number')
 // you can get the file id and version numbers from either getDocuments or after you upload a document.
 ```
+
+## Other Reesource
