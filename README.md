@@ -58,3 +58,37 @@ If you have an `id` for a particular document, you can fetch it with `item`. It 
 
 ## item class
 Unlike v1 of the reMarkable api, all items returned from `items` or `item` are classes that will allow you to delete or modify the document. 
+
+### original metadata
+The metadata initially returned from reMarkable's cloud servers has odd capitilizations and spelling errors. Some of the data is not completely necessary and pertains to the details of the request (and not the document itself). 
+```js
+{
+  "ID": "ec53580c-3579-4fe7-a096-fd1de8011b70", // id
+  "Version": 0, // removed
+  "Message": "", // removed
+  "Success": false, // removed
+  "BlobURLGet": "", // blob
+  "BlobURLGetExpires": "0001-01-01T00:00:00Z", // blobExpiration
+  "ModifiedClient": "0001-01-01T00:00:00Z", // lastModified
+  "Type": "", // type
+  "VissibleName": "", // visibleName
+  "CurrentPage": 0, // currentPage
+  "Bookmarked": false, // bookmarked
+  "Parent": "" // parent
+}
+```
+
+### metadata
+Metadata in an `Item` is non-standard; it does not follow other reMarkable apis. It has been modified to address spelling mistakes (such as `VissibleName`) and make the data more convenient for JavaScript programmers. 
+
+* `id`: used to identify documents, can be stored and passed into `item`
+* `type`: `DocumentType` or `CollectionType`
+* `blob`: where the file is located
+* `blobExpiration`: when the blob will expire
+* `lastModified`: when the file was last edited
+* `visibleName`: file or directory visibleName
+* `currentPage`: opened page
+* `bookmarked`: starred or not
+* `parent`: parent directory 
+
+## resources

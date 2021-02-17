@@ -14,8 +14,6 @@ const Item = require("./api/item")
 // device: token/json/2/device/new
 // discover: service/json/1/document-storage
 
-
-
 class Device {
   constructor(userToken='') {
     Object.assign(this, {
@@ -100,7 +98,7 @@ class Device {
     throw new Error(`could not fetch ${type} host`)
   }
 
-  async _fetchDocuments(options={ withBlob: true }) {
+  async _fetchDocuments(options) {
     const documents = await query(this.storageHost, {
       api: `document-storage/json/2/docs?${encodeParams(options)}`,
       method: "GET"
@@ -112,11 +110,15 @@ class Device {
   }
 
   async item(id) {
-    return (await this._fetchDocuments({ doc: id }))[0]
+    return (await this._fetchDocuments({ 
+      doc: id, withBlob: true 
+    }))[0]
   }
 
   async items() {
-    return (await this._fetchDocuments())
+    return (await this._fetchDocuments({ 
+      withBlob: true 
+    }))
   }
 
   async upload(document) {
