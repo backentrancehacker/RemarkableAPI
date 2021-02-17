@@ -92,11 +92,15 @@ class Device {
     }).then(res => res.json())  
 
     if(Status == "OK") {
-      this[hostName] = `https://${Host}`
+      this[hostName] = Host
       return this[hostName]
     }
 
     throw new Error(`could not fetch ${type} host`)
+  }
+
+  async fetchDocuments(options) {
+    
   }
 }
 

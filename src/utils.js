@@ -18,10 +18,12 @@ const defaultHeaders = {
 
 const query = (endpoint, options) => {
   const { api, body, headers, ...other } = options
-  const url = endpoint.startsWith("https://")
-    ? endpoint
-    : `https://${endpoints[endpoint]}/${api}`
-
+  const url = `https://${
+    endpoints.hasOwnProperty(endpoint)
+      ? endpoints[endpoint]
+      : endpoint
+  }/${api || ""}`
+  
   const payload = {
     method: "POST",
     headers: Object.assign({}, defaultHeaders, headers),

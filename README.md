@@ -37,17 +37,3 @@ reMarkable.userToken = process.env.USER_TOKEN // will not work
 ## Documents
 Once authenticated, you can interact with the API. Currently, you can retrieve all documents, delete documents, and upload documents.
 Remarkable devices only support pdf and epub files.
-
-## Methods
-```
-device.getDocuments()
-// returns an array of all documents on the device
-
-device.uploadDocument('file  path', 'extension (default is pdf)')
-// uploads a file, returns some general meta data about the file uploaded
-
-device.deleteDocument('file id', 'version number')
-// you can get the file id and version numbers from either getDocuments or after you upload a document.
-```
-
-## Other Reesource
