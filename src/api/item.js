@@ -1,7 +1,7 @@
 const fetch = require("node-fetch")
 const fs = require("fs").promises
-
 const { query } = require("../utils")
+
 const map = {
   "ID": "id",
   "Version": "version",
@@ -61,13 +61,13 @@ class Item {
     }
   }
   async update() {
-
+    
   }
   async remove() {
     const { id, version } = this.meta
 
     const [ data ] = await query(this.storageHost, {
-      api: "document-storage/json/2/delete"
+      api: "document-storage/json/2/delete",
       method: "PUT",
       body: {
         ID: id,
