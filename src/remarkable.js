@@ -16,11 +16,11 @@ const Document = require("./api/document")
 
 
 class Device {
-  constructor(sessionToken) {
+  constructor(userToken='') {
     Object.assign(this, {
+      userToken,
       version: "2.0.0",
       name: "remarkable",
-      userToken: sessionToken,
       description: "The unofficial reMarkable API for Node.js"
     })
   }
@@ -99,8 +99,24 @@ class Device {
     throw new Error(`could not fetch ${type} host`)
   }
 
-  async fetchDocuments(options) {
-    
+  async _fetchDocuments(options={ withBlob: true }) {
+    const documents = await query(this.storageHost, {
+      api: `document-storage/json/2/docs?${encodeParams(options)}`,
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${this.userToken}`
+      }
+    }).then(res => res.json())
+
+    return documents.map(meta => (
+      new Document(this.storageHost, meta)
+    ))
+  }
+
+  async document(id) {
+    return id 
+      ? await this._fetchDocuments({ doc: id })[0]
+      : this._fetchDocuments()
   }
 }
 

@@ -27,7 +27,7 @@ const query = (endpoint, options) => {
   const payload = {
     method: "POST",
     headers: Object.assign({}, defaultHeaders, headers),
-    body: JSON.stringify(body || {}),
+    body: JSON.stringify(body),
      ...other
   }
 

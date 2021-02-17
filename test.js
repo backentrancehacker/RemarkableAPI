@@ -5,5 +5,5 @@ const reMarkable = new Device();
 
 (async () => {
   await reMarkable.refresh(process.env.USER_TOKEN);
-  console.log(reMarkable)
+  reMarkable.document().then(console.log)
 })();
