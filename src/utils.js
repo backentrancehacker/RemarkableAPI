@@ -46,7 +46,7 @@ const setUserToken = (token) => {
 
 const requestUpload = (storageHost) => {
   const ID = uuid4()
-  
+
   const data = await query(storageHost, {
     api: "document-storage/json/2/upload/request",
     body: {
@@ -56,19 +56,18 @@ const requestUpload = (storageHost) => {
     }
   }).then(res => res.json())
 
-  data.forEach(datum => {
-    const { Success, Message } = datum
-    if(!Success) {
-      throw new Error(`upload request failed: ${Message.toLowerCase()}`)
-    }
-  })
-
-  const uploadUrls = data.map(datum => datum.BlobURLPut)
-  if(uploadUrls.length !== 1) {
-    throw new Error("unexpected number of upload requests")
+  if(data.length !== 1) {
+    throw new Error("unexpected number of upload urls")
   }
 
-  return [ ID, uploadUrls.shift() ]
+  const [uploadUrl] = data
+  const { Success, Message, BlobURLPut } = uploadUrl
+
+  if(!Success) {
+    throw new Error(`upload request failed: ${ Message.toLowerCase() }`)
+  }
+
+  return [ ID, BlobURLPut ]
 }
 
 module.exports = { 

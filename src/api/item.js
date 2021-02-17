@@ -52,6 +52,11 @@ class Item {
     }).then(res => res.buffer())
     
     await fs.writeFile(fileName, blob)
+    return fileName
+  }
+
+  extract(fileName, location) {
+    
   }
 
   async upload() {
