@@ -7,7 +7,7 @@ const map = {
   "Version": "version",
   "BlobURLGet": "blob",
   "BlobURLGetExpires": "blobExpiration",
-  "ModifiedClient": "lastModified",
+  "ModifiedClient": "dateModified",
   "Type": "type",
   "VissibleName": "visibleName",
   "CurrentPage": "currentPage",
@@ -15,12 +15,12 @@ const map = {
   "Parent": "parent",
 }
 
-const correctInfo = (_meta, invert) => {
+const correct = (_meta, invert) => {
   const meta = {}
 
   for(const [key, value] of Object.entries(_meta)) {
     const mapped = invert
-      ? Object.keys(map).find(prop = map[prop] == key)
+      ? Object.keys(map).find((prop) => map[prop] == key)
       : map[key]
 
     if(mapped) {
@@ -39,7 +39,7 @@ class Item {
       return null
     }
 
-    this.meta = correctInfo(meta)
+    this.meta = correct(meta)
   }
 
   async download(_fileName) {
@@ -68,23 +68,31 @@ class Item {
     }
   }
   
-  async update() {
-    
+  async update(metadata) {
+    const [ body ] = await query(this.storageHost, {
+      api: "document-storage/json/2/upload/update-status",
+      method: "PUT",
+      body: [correct(metadata)]
+    })
+
+    return body.Success
   }
 
   async remove() {
     const { id, version } = this.meta
 
-    const [ data ] = await query(this.storageHost, {
+    const [ body ] = await query(this.storageHost, {
       api: "document-storage/json/2/delete",
       method: "PUT",
-      body: {
-        ID: id,
-        Version: version
-      }
+      body: [
+        {
+          ID: id,
+          Version: version
+        }
+      ]
     }).then(res => res.json())
 
-    return data
+    return body.Success
   }
 }
 

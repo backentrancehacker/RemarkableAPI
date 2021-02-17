@@ -85,7 +85,7 @@ Metadata in an `Item` is non-standard; it does not follow other reMarkable apis.
 * `type`: `DocumentType` or `CollectionType`
 * `blob`: where the file is located
 * `blobExpiration`: when the blob will expire
-* `lastModified`: when the file was last edited
+* `dateModified`: when the file was last edited
 * `visibleName`: file or directory visibleName
 * `currentPage`: opened page
 * `bookmarked`: starred or not

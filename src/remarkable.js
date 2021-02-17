@@ -124,10 +124,14 @@ class Device {
   }
 
   async upload(document) {
+    const [ documentID, uploadUrl ] = requestUpload(this.storageHost)
+    const zip = new AdmZip()
+
     // TODO: uploading in reMarkable
   }
 
   async createDirectory(fileName) {
+
     // TODO: create directory
   }
 }
@@ -135,57 +139,8 @@ class Device {
 
 /*
 class Remarkable {
-	constructor() {
-		this.version = '1.0.0';
-		this.name = 'adcharity-remarkable-api';
-		this.description = 'Unofficial Remarkable Tablet API';
-	}
-	async uploadRequest() {
-		
-	}
 	async updateDocument(metadata) {
-		this.storageHost = await this.getStorageHost();
-				
-		const url = `${this.storageHost}/document-storage/json/2/upload/update-status`;
 
-		const data = await fetch(url, {
-			method: 'PUT',
-			headers: {
-				'User-Agent': userAgent,
-				Authorization: `Bearer ${this.userToken}`
-			},
-			body: JSON.stringify([{
-				ID: metadata.id,
-				Version: metadata.version,
-				ModifiedClient: metadata.dateModified,
-				Type: metadata.type,
-				VissibleName: metadata.visibleName,
-				CurrentPage: metadata.currentPage,
-				Bookmarked: metadata.bookmarked,
-				Parent: metadata.parent,
-			}])
-		}).then(res => res.json());
-
-		return data[0];
-	}
-	async deleteDocument(id, version) {
-		this.storageHost = await this.getStorageHost();
-				
-		const url = `${this.storageHost}/document-storage/json/2/delete`;
-
-		const data = await fetch(url, {
-			method: 'PUT',
-			headers: {
-				'User-Agent': userAgent,
-				Authorization: `Bearer ${this.userToken}`
-			},
-			body: JSON.stringify([{
-				ID: id,
-				Version: version
-			}])
-		}).then(res => res.json());
-
-		return data[0]
 	}
 	async uploadDocument(document, ext) {
 		const docZip = new AdmZip();
@@ -198,8 +153,6 @@ class Remarkable {
 			textScale: 1,
 			transform: {}
 		};
-
-  		const { docId, uploadUrl } = await this.uploadRequest();
 		
 		docZip.addFile(`${docId}.content`, Buffer.from(JSON.stringify(metadata)));
 		docZip.addFile(`${docId}.pagedata`, Buffer.from(''));
