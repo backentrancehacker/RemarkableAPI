@@ -16,21 +16,6 @@ const defaultHeaders = {
   "Content-Type": "application/json"
 }
 
-/**
- * method: 'POST',
-			headers: {
-				'User-Agent': userAgent,
-				'Content-Type': 'application/json',
-				'Authentication': 'Bearer'
-			},
-			body: JSON.stringify({
-				code,
-				deviceDesc: 'desktop-linux',
-				deviceID: uuid4()
-			})
- * 
- */
-
 const query = (endpoint, options) => {
   const { api, body, headers, ...other } = options
   const url = endpoint.startsWith("https://")

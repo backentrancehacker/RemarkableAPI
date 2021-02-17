@@ -4,30 +4,16 @@ const AdmZip = require("adm-zip")
 
 const {
   query,
+  register,
   encodeParams
-} = require('./utils')
-
+} = require("./utils")
+const Document = require("./api/document") 
 
 // user: token/json/2/user/new
 // device: token/json/2/device/new
 // discover: service/json/1/document-storage
 
-const confirmCode = async (code) => {
-  const token = await query("auth", {
-    api: "token/json/2/device/new",
-    body: {
-      code,
-      deviceID: uuid4(),
-      deviceDesc: "desktop-linux"
-    }
-  })
-  
-  if(token.status !== 200) {
-    throw new Error("invalid one-time code")
-  }
 
-  return token.text()
-}
 
 class Device {
   constructor(sessionToken) {
@@ -37,6 +23,23 @@ class Device {
       userToken: sessionToken,
       description: "The unofficial reMarkable API for Node.js"
     })
+  }
+
+  async register(code) {
+    const token = await query("auth", {
+      api: "token/json/2/device/new",
+      body: {
+        code,
+        deviceID: uuid4(),
+        deviceDesc: "desktop-linux"
+      }
+    })
+    
+    if(token.status !== 200) {
+      throw new Error("invalid one-time code")
+    }
+
+    return token.text()
   }
 
   async refresh(token) {
@@ -53,67 +56,47 @@ class Device {
 
     return Promise.all([
       refresh.text(),
-      this.discoverStorage(),
-      this.discoverNotifications()
+      this.discover("storage"),
+      this.discover("notifications")
     ]).then((values) => {
-      const [
-        userToken, 
-        storageHost, 
-        notificationsHost
-      ] = values
-      
-      Object.assign(this, {
-        userToken,
-        storageHost,
-        notificationsHost
-      })
-
-      return userToken
+      this.userToken = values.shift()
+      return this.userToken
     })
   }
 
-  async register(code) {
-    return confirmCode(code)
-  }
+  async discover(type, force) {
+    const hostName = `${type}Host`
 
-  async discoverStorage(force) {
-    if(this.storageHost && !force) {
-      return this.storageHost
+    if(this[hostName] && !force) {
+      return this[hostName]
     }
 
-    const storage = await query("service", {
-      api: `service/json/1/document-storage?${encodeParams({
-        environment: "production",
-        group: "auth0|5a68dc51cb30df3877a1d7c4",
-        apiVer: 2
-      })}`
-    }).then(res => res.json())
-    
-    if(storage.Status !== "OK") {
-      throw new Error("could not fetch storage host")
+    const api = type == "storage"
+      ? (
+        `service/json/1/document-storage?${encodeParams({
+          group: "auth0|5a68dc51cb30df3877a1d7c4",
+          environment: "production",
+          apiVer: 2
+        })}`
+      )
+      : (
+        `service/json/1/notifications?${encodeParams({
+          group: "auth0|7C5a68dc51cb30df1234567890",
+          environment: "production",
+          apiVer: 1
+        })}`
+      )
+
+    const { Status, Host } = await query("service", { 
+      api 
+    }).then(res => res.json())  
+
+    if(Status == "OK") {
+      this[hostName] = `https://${Host}`
+      return this[hostName]
     }
 
-    return `https://${storage.Host}`
-  }
-
-  async discoverNotifications(force) {
-    if(this.notificationsHost && !force) {
-      return this.notificationsHost
-    }
-
-    const notifications = await query("service", {
-      api: `service/json/1/notifications?${encodeParams({
-        environment: "production",
-        group: "auth0|7C5a68dc51cb30df1234567890",
-        apiVer: 1
-      })}`
-    }).then(res => res.json())
-    
-    if(notifications.Status !== "OK") {
-      throw new Error("could not fetch storage host")
-    }
-
-    return `https://${notifications.Host}`
+    throw new Error(`could not fetch ${type} host`)
   }
 }
 
