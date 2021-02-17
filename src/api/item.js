@@ -33,6 +33,11 @@ const correctInfo = (_meta, invert) => {
 class Item {
   constructor(storageHost, meta) {
     this.storageHost = storageHost
+    
+    if(!meta.Success) {
+      return null
+    }
+
     this.meta = correctInfo(meta)
   }
   async download(_fileName) {
@@ -45,6 +50,12 @@ class Item {
     }).then(res => res.buffer())
     
     await fs.writeFile(fileName, blob)
+  }
+  async update() {
+
+  }
+  async remove() {
+    
   }
 }
 

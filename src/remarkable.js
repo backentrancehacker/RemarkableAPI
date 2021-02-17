@@ -108,7 +108,7 @@ class Device {
 
     return documents.map(item => (
       new Item(this.storageHost, item)
-    ))
+    )).filter(v => v !== null)
   }
 
   async item(id) {
@@ -120,6 +120,10 @@ class Device {
   }
 
   async upload(document) {
+    
+  }
+
+  async createDirectory(fileName) {
     
   }
 }
