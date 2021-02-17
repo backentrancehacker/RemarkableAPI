@@ -41,6 +41,7 @@ class Item {
 
     this.meta = correctInfo(meta)
   }
+
   async download(_fileName) {
     const fileName = _fileName.endsWith(".zip")
       ? _fileName
@@ -52,17 +53,20 @@ class Item {
     
     await fs.writeFile(fileName, blob)
   }
+
   async upload() {
     if(this.type == "CollectionType") {
-
+      // TODO: uploading in collection
     }
     else {
       throw new Error("this item is not a folder; upload from the reMarkable instance instead")
     }
   }
+  
   async update() {
     
   }
+
   async remove() {
     const { id, version } = this.meta
 

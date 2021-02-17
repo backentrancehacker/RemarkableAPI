@@ -14,6 +14,32 @@ const Item = require("./api/item")
 // device: token/json/2/device/new
 // discover: service/json/1/document-storage
 
+const requestUpload = (storageHost) => {
+  const ID = uuid4()
+  const data = await query(storageHost, {
+    api: "document-storage/json/2/upload/request",
+    body: {
+      ID,
+      Version: 1
+      Type: "DocumentType",
+    }
+  }).then(res => res.json())
+
+  data.forEach(datum => {
+    const { Success, Message } = datum
+    if(!Success) {
+      throw new Error(`upload request failed: ${Message.toLowerCase()}`)
+    }
+  })
+
+  const uploadUrls = data.map(datum => datum.BlobURLPut)
+  if(uploadUrls.length !== 1) {
+    throw new Error("unexpected number of upload requests")
+  }
+
+  return [ ID, uploadUrls.shift() ]
+}
+
 class Device {
   constructor(userToken='') {
     Object.assign(this, {
@@ -122,11 +148,11 @@ class Device {
   }
 
   async upload(document) {
-    
+    // TODO: uploading in reMarkable
   }
 
   async createDirectory(fileName) {
-
+    // TODO: create directory
   }
 }
 
@@ -139,40 +165,7 @@ class Remarkable {
 		this.description = 'Unofficial Remarkable Tablet API';
 	}
 	async uploadRequest() {
-		this.storageHost = await this.getStorageHost();
-				
-		const url = `${this.storageHost}/document-storage/json/2/upload/request`;
 		
-		const docId = uuid4();
-
-		const data = await fetch(url, {
-			method: 'PUT',
-			headers: {
-				'User-Agent': userAgent,
-				Authorization: `Bearer ${this.userToken}`
-			},
-			body: JSON.stringify([{
-				ID: docId,
-				Type: 'DocumentType',
-				Version: 1
-			}])
-		}).then(res => res.json());
-
-		data.forEach(datum => {
-			if(datum.Success !== true) {
-				throw new Error(`Upload request failed: ${datum.Message}`);
-			}
-		});
-
-		const uploadUrls = data.map(datum => datum.BlobURLPut);
-		if(uploadUrls.length !== 1) {
-			throw new Error('Unexpected number of upload URLs returned');
-		}
-
-		return {
-			docId,
-			uploadUrl: uploadUrls[0]
-		}
 	}
 	async updateDocument(metadata) {
 		this.storageHost = await this.getStorageHost();
