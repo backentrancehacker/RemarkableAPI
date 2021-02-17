@@ -6,39 +6,15 @@ const {
   query,
   register,
   encodeParams,
-  setUserToken
+  setUserToken,
+  requestUpload
 } = require("./utils")
+
 const Item = require("./api/item") 
 
 // user: token/json/2/user/new
 // device: token/json/2/device/new
 // discover: service/json/1/document-storage
-
-const requestUpload = (storageHost) => {
-  const ID = uuid4()
-  const data = await query(storageHost, {
-    api: "document-storage/json/2/upload/request",
-    body: {
-      ID,
-      Version: 1
-      Type: "DocumentType",
-    }
-  }).then(res => res.json())
-
-  data.forEach(datum => {
-    const { Success, Message } = datum
-    if(!Success) {
-      throw new Error(`upload request failed: ${Message.toLowerCase()}`)
-    }
-  })
-
-  const uploadUrls = data.map(datum => datum.BlobURLPut)
-  if(uploadUrls.length !== 1) {
-    throw new Error("unexpected number of upload requests")
-  }
-
-  return [ ID, uploadUrls.shift() ]
-}
 
 class Device {
   constructor(userToken='') {

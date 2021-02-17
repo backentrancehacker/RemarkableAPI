@@ -1,4 +1,5 @@
 const fetch = require("node-fetch")
+const uuid4 = require("uuid4")
 
 const endpoints = {
   auth: "my.remarkable.com",
@@ -43,9 +44,37 @@ const setUserToken = (token) => {
   return token
 }
 
+const requestUpload = (storageHost) => {
+  const ID = uuid4()
+  
+  const data = await query(storageHost, {
+    api: "document-storage/json/2/upload/request",
+    body: {
+      ID,
+      Version: 1
+      Type: "DocumentType",
+    }
+  }).then(res => res.json())
+
+  data.forEach(datum => {
+    const { Success, Message } = datum
+    if(!Success) {
+      throw new Error(`upload request failed: ${Message.toLowerCase()}`)
+    }
+  })
+
+  const uploadUrls = data.map(datum => datum.BlobURLPut)
+  if(uploadUrls.length !== 1) {
+    throw new Error("unexpected number of upload requests")
+  }
+
+  return [ ID, uploadUrls.shift() ]
+}
+
 module.exports = { 
   query,
   endpoints,
   encodeParams, 
-  setUserToken
+  setUserToken,
+  requestUpload
 }
