@@ -91,4 +91,7 @@ Metadata in an `Item` is non-standard; it does not follow other reMarkable apis.
 * `bookmarked`: starred or not
 * `parent`: parent directory 
 
-## resources
+## resources & alternative apis
+https://akeil.de/posts/remarkable-cloud-api/  
+https://github.com/Ogdentrod/reMarkable-typescript  
+https://github.com/splitbrain/ReMarkableAPI
