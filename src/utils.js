@@ -2,8 +2,7 @@ const fetch = require("node-fetch")
 
 const endpoints = {
   auth: "my.remarkable.com",
-  storage: "document-storage-production-dot-remarkable-production.appspot.com",
-  discover: "service-manager-production-dot-remarkable-production.appspot.com",
+  service: "service-manager-production-dot-remarkable-production.appspot.com",
 }
 
 const encodeParams = (params) => (
@@ -41,9 +40,12 @@ const query = (endpoint, options) => {
   const payload = {
     method: "POST",
     headers: Object.assign({}, defaultHeaders, headers),
-    body: JSON.stringify(body),
+    body: JSON.stringify(body || {}),
      ...other
   }
+
+  console.log("URL", url)
+  console.log("PAYLOAD", payload)
 
   return fetch(url, payload)
 }

@@ -18,27 +18,23 @@ const confirmCode = async (code) => {
     body: {
       code,
       deviceID: uuid4(),
-      deviceDesc: "desktop-windows"
-    }
-  }).then(res => res.text())
-
-  const errors = ["invalid", "unknown", "you", "<!doctype html>"]
-
-  errors.forEach(error => {
-    if(token.toLowerCase().startsWith(error)) {
-      throw new Error("invalid one-time code")
+      deviceDesc: "desktop-linux"
     }
   })
+  
+  if(token.status !== 200) {
+    throw new Error("invalid one-time code")
+  }
 
-  return token
+  return token.text()
 }
 
 class Device {
-  constructor(userToken) {
+  constructor(sessionToken) {
     Object.assign(this, {
-      userToken,
       version: "2.0.0",
       name: "remarkable",
+      userToken: sessionToken,
       description: "The unofficial reMarkable API for Node.js"
     })
   }
@@ -55,13 +51,29 @@ class Device {
       throw new Error(`unexpected authentication response code ${refresh.status}`)
     }
 
-    this.userToken = await refresh.text()
-    return this.userToken
+    return Promise.all([
+      refresh.text(),
+      this.discoverStorage(),
+      this.discoverNotifications()
+    ]).then((values) => {
+      const [
+        userToken, 
+        storageHost, 
+        notificationsHost
+      ] = values
+      
+      Object.assign(this, {
+        userToken,
+        storageHost,
+        notificationsHost
+      })
+
+      return userToken
+    })
   }
 
   async register(code) {
-    const token = await confirmCode(code)
-    return this.refresh(token)
+    return confirmCode(code)
   }
 
   async discoverStorage(force) {
@@ -69,19 +81,39 @@ class Device {
       return this.storageHost
     }
 
-    const storageHost = await query("discover", {
+    const storage = await query("service", {
       api: `service/json/1/document-storage?${encodeParams({
         environment: "production",
         group: "auth0|5a68dc51cb30df3877a1d7c4",
         apiVer: 2
       })}`
     }).then(res => res.json())
-
-    if(storageHost.status !== 200) {
-      throw new Error(`unexpected storage host response code ${storageHost.status}`)
+    
+    if(storage.Status !== "OK") {
+      throw new Error("could not fetch storage host")
     }
 
-    return `https://${storageHost.Host}`
+    return `https://${storage.Host}`
+  }
+
+  async discoverNotifications(force) {
+    if(this.notificationsHost && !force) {
+      return this.notificationsHost
+    }
+
+    const notifications = await query("service", {
+      api: `service/json/1/notifications?${encodeParams({
+        environment: "production",
+        group: "auth0|7C5a68dc51cb30df1234567890",
+        apiVer: 1
+      })}`
+    }).then(res => res.json())
+    
+    if(notifications.Status !== "OK") {
+      throw new Error("could not fetch storage host")
+    }
+
+    return `https://${notifications.Host}`
   }
 }
 
