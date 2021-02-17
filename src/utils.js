@@ -1,16 +1,45 @@
-const query = params => {
-	const esc = encodeURIComponent;
-	return Object.keys(params)
-		.map(k => `${esc(k)}=${esc(params[k])}`)
-		.join('&')
-}
-
-const endpoints = {
-  device: "https://my.remarkable.com/token/json/2/device/new",
-  store: "https://service-manager-production-dot-remarkable-production.appspot.com/service/json/1/document-storage",
-  user: "https://my.remarkable.com/token/json/2/user/new"
-}
+const fetch = require("node-fetch")
 
 const userAgent = "remarkable-api"
 
-module.exports = { query, endpoints, userAgent }
+const endpoints = {
+  auth: "my.remarkable.com",
+  device: "my.remarkable.com",
+  storage: "document-storage-production-dot-remarkable-production.appspot.com",
+  discover: "service-manager-production-dot-remarkable-production.appspot.com",
+}
+
+const encodeParams = (params) => (
+  Object.keys(params)
+    .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`)
+    .join('&')
+)
+
+const defaultHeaders = {
+  "user-agent": userAgent,
+  "content-type": "application/json",
+  "Authentication": "Bearer"
+}
+
+const query = (endpoint, options) => {
+  const { api, body, headers, ...other } = options
+  const url = `https://${endpoints[endpoint]}/${api}`
+
+  if(endpoints.hasOwnProperty(endpoint)) {
+    return fetch(url, {
+      method: "POST",
+      headers: Object.assign({}, headers, defaultHeaders),
+      body: JSON.stringify(body)
+      ...other
+    })
+  }
+
+  throw new Error(`${endpoint} is not a valid endpoint`)
+}
+
+module.exports = { 
+  encodeParams, 
+  userAgent,
+  endpoints,
+  query
+}

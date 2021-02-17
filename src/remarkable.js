@@ -1,14 +1,79 @@
-const fetch = require("node-fetch")
-const AdmZip = require("adm-zip")
-const uuid4 = require("uuid4")
 const path = require("path")
+const uuid4 = require("uuid4")
+const AdmZip = require("adm-zip")
 
-const { query, endpoints, userAgent } = require('./utils')
+const {
+  query,
+  encodeParams
+} = require('./utils')
+
+
+// user: token/json/2/user/new
+// device: token/json/2/device/new
+// discover: service/json/1/document-storage
+
+
+const confirmCode = async (code) => {
+  const token = await query("device", {
+    code,
+    deviceID: uuid4(),
+    deviceDesc: "desktop-linux",
+  }).then(res => res.text())
+
+  ["invalid", "unknown", "you"].forEach(error => {
+    if(token.startsWith(error)) {
+      throw new Error("invalid one-time code")
+    }
+  })
+
+  return token
+}
 
 class Device {
   name = userAgent
   version = "1.0.1"
   description = "The unofficial reMarkable API for Node.js"
+
+  constructor(userToken) {
+    this.userToken = userToken
+  }
+
+  async authenticate(code) {
+    const token = await confirmCode(code)
+    const refresh = await query("user", {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    })
+
+    if(refresh.status !== 200) {
+      throw new Error(`unexpected authentication response code ${refresh.status}`)
+    }
+
+    this.userToken = await refresh.text()
+    this.storageHost = await this.#discoverStorage()
+    return this.userToken
+  }
+
+  async #discoverStorage(force) {
+    if(this.storageHost && !force) {
+      return this.storageHost
+    }
+
+    const storageHost = await query("discover", {
+      api: `service/json/1/document-storage?${encodeParams({
+        environment: "production",
+        group: "auth0|5a68dc51cb30df3877a1d7c4",
+        apiVer: 2
+      })}`
+    }).then(res => res.json())
+
+    if(storageHost.status !== 200) {
+      throw new Error(`unexpected storage host response code ${storageHost.status}`)
+    }
+
+    return `https://${storageHost.Host}`
+  }
 }
 
 
@@ -18,65 +83,6 @@ class Remarkable {
 		this.version = '1.0.0';
 		this.name = 'adcharity-remarkable-api';
 		this.description = 'Unofficial Remarkable Tablet API';
-	}
-	static async authenticateDevice(code) {
-		const token = await fetch(endpoint.device, {
-			method: 'POST',
-			headers: {
-				'User-Agent': userAgent,
-				'Content-Type': 'application/json',
-				'Authentication': 'Bearer'
-			},
-			body: JSON.stringify({
-				code,
-				deviceDesc: 'desktop-linux',
-				deviceID: uuid4()
-			})
-		}).then(res => res.text());
-
-		['Invalid', 'Unknown', 'You'].forEach(err => {
-			if(token.startsWith(err)) {
-				throw new Error('Failed to authenticate');
-			}
-		});
-
-		return token;
-	}
-	async authenticateUser(code) {
-		const token = await Remarkable.authenticateDevice(code);
-
-		const refresh = await fetch(endpoint.user, {
-			method: 'POST',
-			headers: {
-				'User-Agent': userAgent,
-				'Authorization': `Bearer ${token}`
-			}
-		});
-
-		if(refresh.status !== 200) {
-			throw new Error(`Unexpected authenication status: ${refresh.status}`);
-		}
-		
-		this.userToken = await refresh.text();
-
-		return this.userToken;
-	}
-	async getStorageHost() {
-		if(this.storageHost) { 
-			return this.storageHost;
-		}
-
-		const value = await fetch(`${endpoint.store}?${utils.query({
-			environment: 'production',
-			group: 'auth0|5a68dc51cb30df3877a1d7c4',
-			apiVer: 2
-		})}`).then(res => res.json());
-
-		if(value.Status !== 'OK') {
-			throw new Error(`Unexpected storage status: ${value.status}`);
-		}
-		
-		return `https://${value.Host}`;
 	}
 	async getDocuments(options) {
 		this.storageHost = await this.getStorageHost();
