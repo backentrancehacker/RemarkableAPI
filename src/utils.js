@@ -13,7 +13,8 @@ const encodeParams = (params) => (
 
 const defaultHeaders = {
   "User-Agent": "node-remarkable-api",
-  "Content-Type": "application/json"
+  "Content-Type": "application/json",
+  "Authorization": "Bearer"
 }
 
 const query = (endpoint, options) => {
@@ -37,8 +38,14 @@ const query = (endpoint, options) => {
   return fetch(url, payload)
 }
 
+const setUserToken = (token) => {
+  defaultHeaders.Authorization = `Bearer ${token}`
+  return token
+}
+
 module.exports = { 
-  encodeParams, 
+  query,
   endpoints,
-  query
+  encodeParams, 
+  setUserToken
 }

@@ -5,7 +5,8 @@ const AdmZip = require("adm-zip")
 const {
   query,
   register,
-  encodeParams
+  encodeParams,
+  setUserToken
 } = require("./utils")
 const Item = require("./api/item") 
 
@@ -60,7 +61,7 @@ class Device {
       this.discover("notifications")
     ]).then((values) => {
       this.userToken = values.shift()
-      return this.userToken
+      return setUserToken(this.userToken)
     })
   }
 
@@ -102,10 +103,7 @@ class Device {
   async _fetchDocuments(options={ withBlob: true }) {
     const documents = await query(this.storageHost, {
       api: `document-storage/json/2/docs?${encodeParams(options)}`,
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${this.userToken}`
-      }
+      method: "GET"
     }).then(res => res.json())
 
     return documents.map(item => (
@@ -118,7 +116,11 @@ class Device {
   }
 
   async items(id) {
-    return (await this._fetchDocuments(id ? { doc: id } : false))
+    return (await this._fetchDocuments())
+  }
+
+  async upload(document) {
+    
   }
 }
 
