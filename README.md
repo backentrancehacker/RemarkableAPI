@@ -57,10 +57,10 @@ If you have an `id` for a particular document, you can fetch it with `item`. It 
 ```
 
 ## item class
-Unlike v1 of the reMarkable api, all items returned from `items` or `item` are classes that will allow you to delete or modify the document. Items that cannot be fetched will returned as `null`.
+Unlike v1 of the reMarkable api, all items returned from `items` or `item` are classes that will allow you to delete or modify the document. Items that cannot be fetched will be returned as `null`.
 
 ### original metadata
-The metadata initially returned from reMarkable's cloud servers has odd capitilizations and spelling errors. Some of the data is not completely necessary and pertains to the details of the request (and not the document itself). 
+The metadata initially retrieved from reMarkable's cloud servers contains odd capitilizations and spelling errors. Some of the data is not completely necessary and pertains to the details of the request (and not the document itself). 
 ```js
 {
   "ID": "ec53580c-3579-4fe7-a096-fd1de8011b70", // id
