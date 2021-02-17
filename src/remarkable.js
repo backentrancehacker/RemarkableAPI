@@ -115,7 +115,7 @@ class Device {
     return (await this._fetchDocuments({ doc: id }))[0]
   }
 
-  async items(id) {
+  async items() {
     return (await this._fetchDocuments())
   }
 
@@ -124,7 +124,7 @@ class Device {
   }
 
   async createDirectory(fileName) {
-    
+
   }
 }
 

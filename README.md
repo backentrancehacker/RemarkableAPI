@@ -28,15 +28,33 @@ reMarkable.register("one-time code").then(code => {
 ```
 
 ## setting user token
-You can set the `userToken` of the device using the `refresh` method. This method will also reset the `storageHost` and `notificationsHost` that are required to upload documents and send messages to the reMarkable. 
+You can set the `userToken` of the device using the `refresh` method. This method will also reset `storageHost` and `notificationsHost`, which are required to upload documents and send messages to the reMarkable. 
 ```js
-const Device = require("adcharity-remarkable-api")
-const reMarkable = new Device()
-
-reMarkable.refresh(process.env.USER_TOKEN) // recommended
+...
+reMarkable.refresh(process.env.USER_TOKEN)
 reMarkable.userToken = process.env.USER_TOKEN // will not work
 ```
 
-## Documents
-Once authenticated, you can interact with the API. Currently, you can retrieve all documents, delete documents, and upload documents.
-Remarkable devices only support pdf and epub files.
+## items
+`items` will return an array of all documents and collections (or folders) on your reMarkable. 
+```js
+...
+(async () => {
+  await reMarkable.refresh(process.env.USER_TOKEN);
+  reMarkable.items().then(everything => {
+    console.log(everything);
+  });
+})();
+```
+
+## item
+If you have an `id` for a particular document, you can fetch it with `item`. It will return a signle document or collection.
+```js
+(async () => {
+  await reMarkable.refresh(process.env.USER_TOKEN);
+  reMarkable.item("4c8566a1-1d89-4e3d-80e6-5f6bb125c5a7").then(console.log);
+})();
+```
+
+## item class
+Unlike v1 of the reMarkable api, all items returned from `items` or `item` are classes that will allow you to delete or modify the document. 

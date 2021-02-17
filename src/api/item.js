@@ -51,11 +51,14 @@ class Item {
     
     await fs.writeFile(fileName, blob)
   }
+  async upload() {
+    // if type == CollectionType    
+  }
   async update() {
 
   }
   async remove() {
-    
+
   }
 }
 
