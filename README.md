@@ -62,8 +62,11 @@ If you have an `id` for a particular document, you can fetch it with `item`. It 
 (async () => {
   await reMarkable.refresh(process.env.USER_TOKEN);
   
-  const { id } = await reMarkable.upload(path.join(__dirname, "./example.pdf"))
-  const item = await reMarkable.item(id)
+  const document = await reMarkable.upload(path.join(__dirname, "./example.pdf"))
+
+  if(document) {
+    const item = await reMarkable.item(document.id)
+  }
 })();
 ```
 

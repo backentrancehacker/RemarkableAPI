@@ -184,9 +184,7 @@ class Device {
         id: docID,
         visibleName: fileName
       })
-      : ({
-        success: false
-      })
+      : false
   }
 
   async directory(dirName) {
