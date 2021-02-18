@@ -24,11 +24,6 @@ const query = (endpoint, options) => {
     ? endpoint
     : `https://${endpoints.hasOwnProperty(endpoint) ? endpoints[endpoint] : endpoint}/${api || ""}`
 
-  console.log("======= URL =========")
-  console.log(url)
-  console.log("======= ENDPOINT =========")
-  console.log(endpoint)
-  
   const payload = {
     method: "POST",
     headers: Object.assign({}, defaultHeaders, headers),
@@ -36,8 +31,8 @@ const query = (endpoint, options) => {
      ...other
   }
 
-  console.log("URL", url)
-  console.log("PAYLOAD", payload)
+  // console.log("URL", url)
+  // console.log("PAYLOAD", payload)
 
   return fetch(url, payload)
 }
