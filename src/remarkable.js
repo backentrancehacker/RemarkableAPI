@@ -136,7 +136,7 @@ class Device {
 
     const zip = new AdmZip()
 
-    zip.addFile(`${docID}.content`, JSON.stringify({
+    zip.addFile(`${docID}.content`, Buffer.from(JSON.stringify({
       extraMetadata: {},
       fileType,
       lastOpenedPage: 0,
@@ -145,7 +145,7 @@ class Device {
       pageCount: 0,
       textScale: 1,
       transform: {},
-    }))
+    })))
     zip.addFile(`${docID}.pagedata`, [])
     zip.addLocalFile(fileName, "", fileType)
 
