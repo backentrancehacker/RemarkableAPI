@@ -59,7 +59,7 @@ const requestUpload = async (storageHost) => {
   const { Success, Message, BlobURLPut } = body
 
   if(!Success) {
-    throw new Error(`upload request failed`)
+    throw new Error("upload request failed")
   }
 
   return [ ID, BlobURLPut ]

@@ -174,14 +174,19 @@ class Device {
       api: "document-storage/json/2/upload/update-status",
       method: "PUT",
       body: [documentMetadata({
-        VissibleName: fileName
+        VissibleName: fileName,
+        ID: docID
       })]
     }).then(res => res.json())
-    
-    return ({
-      id: docID,
-      visibleName: fileName
-    })
+
+    return body.Success
+      ? ({
+        id: docID,
+        visibleName: fileName
+      })
+      : ({
+        success: false
+      })
   }
 
   async directory(dirName) {
