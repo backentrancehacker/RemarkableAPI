@@ -1,35 +1,6 @@
 const fetch = require("node-fetch")
 const fs = require("fs").promises
-const { query } = require("../utils")
-
-const map = {
-  "ID": "id",
-  "Version": "version",
-  "BlobURLGet": "blob",
-  "BlobURLGetExpires": "blobExpiration",
-  "ModifiedClient": "dateModified",
-  "Type": "type",
-  "VissibleName": "visibleName",
-  "CurrentPage": "currentPage",
-  "Bookmarked": "bookmarked",
-  "Parent": "parent",
-}
-
-const correct = (_meta, invert) => {
-  const meta = {}
-
-  for(const [key, value] of Object.entries(_meta)) {
-    const mapped = invert
-      ? Object.keys(map).find((prop) => map[prop] == key)
-      : map[key]
-
-    if(mapped) {
-      meta[mapped] = value
-    }
-  }
-
-  return meta
-}
+const { query, correct } = require("../utils")
 
 class Item {
   constructor(storageHost, meta) {
@@ -69,11 +40,19 @@ class Item {
   }
   
   async update(metadata) {
+    Object.assign(this.meta, {
+      version: this.meta.version + 1,
+      lastModified: new Date().toISOString()
+    })
+
     const [ body ] = await query(this.storageHost, {
       api: "document-storage/json/2/upload/update-status",
       method: "PUT",
-      body: [correct(metadata)]
-    })
+      body: [correct({
+        ...this.meta,
+        ...metadata
+      }, true)]
+    }).then(res => res.json())
 
     return body.Success
   }
@@ -84,12 +63,10 @@ class Item {
     const [ body ] = await query(this.storageHost, {
       api: "document-storage/json/2/delete",
       method: "PUT",
-      body: [
-        {
-          ID: id,
-          Version: version
-        }
-      ]
+      body: [{
+        ID: id,
+        Version: version
+      }]
     }).then(res => res.json())
 
     return body.Success

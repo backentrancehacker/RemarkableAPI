@@ -44,24 +44,19 @@ const setUserToken = (token) => {
   return token
 }
 
-const requestUpload = (storageHost) => {
+const requestUpload = async (storageHost) => {
   const ID = uuid4()
 
-  const data = await query(storageHost, {
+  const [ body ] = await query(storageHost, {
     api: "document-storage/json/2/upload/request",
     body: {
       ID,
-      Version: 1
+      Version: 1,
       Type: "DocumentType",
     }
   }).then(res => res.json())
 
-  if(data.length !== 1) {
-    throw new Error("unexpected number of upload urls")
-  }
-
-  const [uploadUrl] = data
-  const { Success, Message, BlobURLPut } = uploadUrl
+  const { Success, Message, BlobURLPut } = body
 
   if(!Success) {
     throw new Error(`upload request failed: ${ Message.toLowerCase() }`)
@@ -70,8 +65,38 @@ const requestUpload = (storageHost) => {
   return [ ID, BlobURLPut ]
 }
 
+const map = {
+  "ID": "id",
+  "Version": "version",
+  "BlobURLGet": "blob",
+  "BlobURLGetExpires": "blobExpiration",
+  "ModifiedClient": "lastModified",
+  "Type": "type",
+  "VissibleName": "visibleName",
+  "CurrentPage": "currentPage",
+  "Bookmarked": "bookmarked",
+  "Parent": "parent",
+}
+
+const correct = (_meta, invert) => {
+  const meta = {}
+
+  for(const [key, value] of Object.entries(_meta)) {
+    const mapped = invert
+      ? Object.keys(map).find((prop) => map[prop] == key)
+      : map[key]
+
+    if(mapped) {
+      meta[mapped] = value
+    }
+  }
+
+  return meta
+}
+
 module.exports = { 
   query,
+  correct,
   endpoints,
   encodeParams, 
   setUserToken,

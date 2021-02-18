@@ -126,6 +126,9 @@ class Device {
   async upload(document) {
     const [ documentID, uploadUrl ] = requestUpload(this.storageHost)
     const zip = new AdmZip()
+    const metadata = {
+      
+    }
 
     // TODO: uploading in reMarkable
   }
