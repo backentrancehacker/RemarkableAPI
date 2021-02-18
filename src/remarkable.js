@@ -146,7 +146,7 @@ class Device {
       textScale: 1,
       transform: {},
     })))
-    zip.addFile(`${docID}.pagedata`, [])
+    zip.addFile(`${docID}.pagedata`, Buffer.from(''))
     zip.addLocalFile(fileName, "", fileType)
 
     await query(uploadUrl, {
