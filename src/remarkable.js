@@ -151,7 +151,7 @@ class Device {
 
     const zip = new AdmZip()
 
-    zip.addFile(`${docID}.content`, Buffer.from(JSON.stringify({
+    zip.addFile(`${docID}.content`, JSON.stringify({
       extraMetadata: {},
       fileType,
       lastOpenedPage: 0,
@@ -160,8 +160,8 @@ class Device {
       pageCount: 0,
       textScale: 1,
       transform: {},
-    })))
-    zip.addFile(`${docID}.pagedata`, Buffer.from(''))
+    }))
+    zip.addFile(`${docID}.pagedata`, [])
     zip.addLocalFile(fileName, "", fileType)
 
     await query(uploadUrl, {
@@ -169,20 +169,6 @@ class Device {
       buffer: true,
 			body: zip.toBuffer()
 		})
-
-    /*
-      deleted: false,
-  lastModified: new Date().toISOString(),
-  ModifiedClient: new Date().toISOString(),
-  metadatamodified: false,
-  modified: false,
-  parent: '',
-  pinned: false,
-  synced: true,
-  type: ItemType.DocumentType,
-  version: 1,
-  VissibleName: 'New Document',
-     */
 
     const [ body ] = await query(this.storageHost, {
       api: "document-storage/json/2/upload/update-status",

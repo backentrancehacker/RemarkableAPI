@@ -5,11 +5,7 @@ const { query, correct } = require("../utils")
 class Item {
   constructor(storageHost, meta) {
     this.storageHost = storageHost
-    
-    if(!meta.Success) {
-      return null
-    }
-
+    this.exists = meta.Success
     this.meta = correct(meta)
   }
 
