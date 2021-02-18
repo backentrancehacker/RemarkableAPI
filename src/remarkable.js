@@ -1,6 +1,7 @@
 const path = require("path")
 const uuid4 = require("uuid4")
 const AdmZip = require("adm-zip")
+const pkg = require("../package.json")
 
 const {
   query,
@@ -21,9 +22,9 @@ class Device {
   constructor(userToken='') {
     Object.assign(this, {
       userToken,
-      version: "2.0.0",
-      name: "remarkable",
-      description: "The unofficial reMarkable API for Node.js"
+      name: pkg.name,
+      version: pkg.version,
+      description: pkg.description
     })
   }
 

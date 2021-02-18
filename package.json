@@ -17,6 +17,7 @@
   "dependencies": {
     "adm-zip": "^0.4.16",
     "node-fetch": "^2.6.1",
+    "update-notifier": "^5.1.0",
     "uuid4": "^2.0.2"
   }
 }
