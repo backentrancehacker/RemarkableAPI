@@ -128,7 +128,6 @@ Metadata in an `Item` is non-standard; it does not follow other reMarkable apis.
 })();
 ```
 
-
 ## resources & alternative apis
 https://akeil.de/posts/remarkable-cloud-api/  
 https://github.com/Ogdentrod/reMarkable-typescript  

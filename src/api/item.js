@@ -27,7 +27,7 @@ class Item {
   }
 
   extract(fileName, location) {
-    
+    // TODO: extract zip
   }
 
   async upload() {

@@ -174,7 +174,7 @@ class Device {
     })
   }
 
-  async createDirectory(fileName) {
+  async directory(dirName) {
     // TODO: create directory
   }
 }
