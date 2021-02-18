@@ -18,6 +18,21 @@ const Item = require("./api/item")
 // device: token/json/2/device/new
 // discover: service/json/1/document-storage
 
+const documentMetadata = (meta) => ({
+  deleted: false,
+  lastModified: new Date().toISOString(),
+  ModifiedClient: new Date().toISOString(),
+  metadatamodified: false,
+  modified: false,
+  parent: '',
+  pinned: false,
+  synced: true,
+  type: "DocumentType",
+  version: 1,
+  VissibleName: "New Document",
+  ...meta
+})
+
 class Device {
   constructor(userToken='') {
     Object.assign(this, {
@@ -155,20 +170,28 @@ class Device {
 			body: zip.toBuffer()
 		})
 
+    /*
+      deleted: false,
+  lastModified: new Date().toISOString(),
+  ModifiedClient: new Date().toISOString(),
+  metadatamodified: false,
+  modified: false,
+  parent: '',
+  pinned: false,
+  synced: true,
+  type: ItemType.DocumentType,
+  version: 1,
+  VissibleName: 'New Document',
+     */
+
     const [ body ] = await query(this.storageHost, {
       api: "document-storage/json/2/upload/update-status",
       method: "PUT",
-      body: [correct({
-        id: docID,
-        parent: "",
-        version: 1,
-        bookmarked: false,
-        type: "DocumentType",
-        visibleName: fileName,
-        lastModified: new Date().toISOString()
-      }, true)]
+      body: [documentMetadata({
+        VissibleName: fileName
+      })]
     }).then(res => res.json())
-
+    
     return ({
       id: docID,
       visibleName: fileName
