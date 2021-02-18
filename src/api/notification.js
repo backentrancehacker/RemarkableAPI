@@ -1,7 +1,20 @@
+const WebSocket = require("ws")
+
+let wss = {}
+
 class Notification {
-  constructor(notificationsHost) {
-    this.notificationsHost = this.notificationsHost
+  constructor() {
+
   }
 }
 
-module.exports = Notification
+const setWebSocket = (notificationsHost) => {
+  wss = new WebSocket(`wss://${notificationsHost}`, {
+    perMessageDeflate: false
+  })
+}
+
+module.exports = {
+  Notification,
+  setWebSocket
+}
