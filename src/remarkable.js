@@ -123,14 +123,50 @@ class Device {
     }))
   }
 
-  async upload(document) {
-    const [ documentID, uploadUrl ] = requestUpload(this.storageHost)
-    const zip = new AdmZip()
-    const metadata = {
-      
+  async upload(fileName) {
+    const [ documentName, fileType ] = fileName.split('.')
+
+    if(!["pdf", "epub"].includes(fileType)) {
+      throw new Error(`${fileName} must be a pdf or epub`)
     }
 
-    // TODO: uploading in reMarkable
+    const [ docID, uploadUrl ] = requestUpload(this.storageHost)
+    const zip = new AdmZip()
+
+    zip.addFile(`${docID}.content`, JSON.stringify({
+      extraMetadata: {},
+      fileType,
+      lastOpenedPage: 0,
+      lineHeight: -1,
+      margins: fileType == "pdf" ? 180 : 100,
+      pageCount: 0,
+      textScale: 1,
+      transform: {},
+    }))
+    zip.addFile(`${docID}.pagedata`, [])
+    zip.addLocalFile(documentName, "", fileType)
+
+    await query(uploadUrl, {
+			method: "PUT",
+      buffer: true,
+			body: zip.toBuffer()
+		})
+
+    const [ body ] = await query(this.storageHost, {
+      api: "document-storage/json/2/upload/update-status",
+      method: "PUT",
+      body: [correct({
+        id: docID,
+        parent: "",
+        version: 1,
+        bookmarked: false,
+        type: "DocumentType",
+        visibleName: documentName,
+        lastModified: new Date().toISOString()
+      }, true)]
+    }).then(res => res.json())
+
+    return body.Success
   }
 
   async createDirectory(fileName) {
@@ -138,48 +174,5 @@ class Device {
     // TODO: create directory
   }
 }
-
-
-/*
-class Remarkable {
-	async updateDocument(metadata) {
-
-	}
-	async uploadDocument(document, ext) {
-		const docZip = new AdmZip();
-		const metadata = {
-			extraMetadata: {},
-			fileType: ext || 'pdf',
-			lastOpenedPage: 0,
-			lineHeight: -1,
-			margins: 180,
-			textScale: 1,
-			transform: {}
-		};
-		
-		docZip.addFile(`${docId}.content`, Buffer.from(JSON.stringify(metadata)));
-		docZip.addFile(`${docId}.pagedata`, Buffer.from(''));
-  		docZip.addLocalFile(document, '', `${docId}.${ext || 'pdf'}`);
-		
-		await fetch(uploadUrl, {
-			method: 'PUT',
-			body: docZip.toBuffer(),
-			headers: {
-				'User-Agent': userAgent,
-				Authorization: `Bearer ${this.userToken}`
-			},
-		});
-
-		await this.updateDocument({
-			id: docId,
-			parent: '',
-			visibleName: path.basename(document, path.extname(document)),
-			version: 1,
-			type: 'DocumentType',
-			dateModified: (new Date()).toISOString()
-		});
-	}
-}
-*/
 
 module.exports = Device

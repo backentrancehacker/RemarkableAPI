@@ -19,7 +19,7 @@ const defaultHeaders = {
 }
 
 const query = (endpoint, options) => {
-  const { api, body, headers, ...other } = options
+  const { api, buffer, body, headers, ...other } = options
   const url = `https://${
     endpoints.hasOwnProperty(endpoint)
       ? endpoints[endpoint]
@@ -29,7 +29,7 @@ const query = (endpoint, options) => {
   const payload = {
     method: "POST",
     headers: Object.assign({}, defaultHeaders, headers),
-    body: JSON.stringify(body),
+    body: buffer ? body : JSON.stringify(body),
      ...other
   }
 
