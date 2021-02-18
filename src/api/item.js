@@ -42,16 +42,14 @@ class Item {
   async update(metadata) {
     Object.assign(this.meta, {
       version: this.meta.version + 1,
-      lastModified: new Date().toISOString()
+      lastModified: new Date().toISOString(),
+      ...metadata
     })
 
     const [ body ] = await query(this.storageHost, {
       api: "document-storage/json/2/upload/update-status",
       method: "PUT",
-      body: [correct({
-        ...this.meta,
-        ...metadata
-      }, true)]
+      body: [correct(this.meta, true)]
     }).then(res => res.json())
 
     return body.Success

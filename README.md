@@ -56,6 +56,17 @@ If you have an `id` for a particular document, you can fetch it with `item`. It 
 })();
 ```
 
+## upload
+`upload` takes the file path as a parameter. It is recommended to use `__dirname`. Uploading a document will return some very basic metadata, including the document `id` and `visibleName`. 
+```js
+(async () => {
+  await reMarkable.refresh(process.env.USER_TOKEN);
+  
+  const { id } = await reMarkable.upload(path.join(__dirname, "./example.pdf"))
+  const item = await reMarkable.item(id)
+})();
+```
+
 ## item class
 Unlike v1 of the reMarkable api, everything returned from `items` or `item` is encapsulated within an `Item` class. This class contains methods that will allow you to delete or modify a particular document.
 
@@ -90,6 +101,33 @@ Metadata in an `Item` is non-standard; it does not follow other reMarkable apis.
 * `currentPage`: opened page
 * `bookmarked`: starred or not
 * `parent`: parent directory 
+
+### update
+`update` allows you to change the metadata of a document. The only properties you can change are `parent`, `bookmarked`, and `visibleName`.
+```js
+(async () => {
+  await reMarkable.refresh(process.env.USER_TOKEN);
+  const item = await reMarkable.item("4c8566a1-1d89-4e3d-80e6-5f6bb125c5a7");
+  item.update({
+    visibleName: "spanish-test"
+  }).then(success => {
+    // success = true or false
+  })
+})();
+```
+
+### remove
+`remove` deletes a document.
+```js
+(async () => {
+  await reMarkable.refresh(process.env.USER_TOKEN);
+  const item = await reMarkable.item("4c8566a1-1d89-4e3d-80e6-5f6bb125c5a7");
+  item.remove().then(success => {
+    // success = true or false
+  })
+})();
+```
+
 
 ## resources & alternative apis
 https://akeil.de/posts/remarkable-cloud-api/  

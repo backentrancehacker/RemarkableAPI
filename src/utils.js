@@ -20,11 +20,14 @@ const defaultHeaders = {
 
 const query = (endpoint, options) => {
   const { api, buffer, body, headers, ...other } = options
-  const url = `https://${
-    endpoints.hasOwnProperty(endpoint)
-      ? endpoints[endpoint]
-      : endpoint
-  }/${api || ""}`
+  const url = /^https/.test(endpoint)
+    ? endpoint
+    : `https://${endpoints.hasOwnProperty(endpoint) ? endpoints[endpoint] : endpoint}/${api || ""}`
+
+  console.log("======= URL =========")
+  console.log(url)
+  console.log("======= ENDPOINT =========")
+  console.log(endpoint)
   
   const payload = {
     method: "POST",
@@ -49,17 +52,19 @@ const requestUpload = async (storageHost) => {
 
   const [ body ] = await query(storageHost, {
     api: "document-storage/json/2/upload/request",
-    body: {
+    method: "PUT",
+    body: [{
       ID,
       Version: 1,
       Type: "DocumentType",
-    }
+      ModifiedClient: new Date().toISOString()
+    }]
   }).then(res => res.json())
 
   const { Success, Message, BlobURLPut } = body
 
   if(!Success) {
-    throw new Error(`upload request failed: ${ Message.toLowerCase() }`)
+    throw new Error(`upload request failed`)
   }
 
   return [ ID, BlobURLPut ]

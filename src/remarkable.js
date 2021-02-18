@@ -4,6 +4,7 @@ const AdmZip = require("adm-zip")
 
 const {
   query,
+  correct,
   register,
   encodeParams,
   setUserToken,
@@ -124,13 +125,14 @@ class Device {
   }
 
   async upload(fileName) {
-    const [ documentName, fileType ] = fileName.split('.')
+    const fileType = fileName.split('.').pop()
 
     if(!["pdf", "epub"].includes(fileType)) {
       throw new Error(`${fileName} must be a pdf or epub`)
     }
 
-    const [ docID, uploadUrl ] = requestUpload(this.storageHost)
+    const [docID, uploadUrl] = await requestUpload(this.storageHost)
+
     const zip = new AdmZip()
 
     zip.addFile(`${docID}.content`, JSON.stringify({
@@ -144,7 +146,7 @@ class Device {
       transform: {},
     }))
     zip.addFile(`${docID}.pagedata`, [])
-    zip.addLocalFile(documentName, "", fileType)
+    zip.addLocalFile(fileName, "", fileType)
 
     await query(uploadUrl, {
 			method: "PUT",
@@ -161,18 +163,18 @@ class Device {
         version: 1,
         bookmarked: false,
         type: "DocumentType",
-        visibleName: documentName,
+        visibleName: fileName,
         lastModified: new Date().toISOString()
       }, true)]
     }).then(res => res.json())
 
-    console.log(body)
-
-    return body.Success
+    return ({
+      id: docID,
+      visibleName: fileName
+    })
   }
 
   async createDirectory(fileName) {
-
     // TODO: create directory
   }
 }
