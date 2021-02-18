@@ -166,6 +166,8 @@ class Device {
       }, true)]
     }).then(res => res.json())
 
+    console.log(body)
+
     return body.Success
   }
 
